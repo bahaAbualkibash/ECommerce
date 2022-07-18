@@ -1,10 +1,11 @@
 using ECommerce.Data;
+using ECommerce.Repo;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Configuration.GetConnectionString("DefualtConnection");
+builder.Services.AddScoped<IProductRepo, ProductRepo>();
 builder.Services.AddDbContext<StoreContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefualtConnection")));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

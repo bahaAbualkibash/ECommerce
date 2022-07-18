@@ -1,8 +1,6 @@
-﻿using ECommerce.Data;
-using ECommerce.Models;
-using Microsoft.AspNetCore.Http;
+﻿using ECommerce.Models;
+using ECommerce.Repo;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce.Controllers
 {
@@ -10,23 +8,38 @@ namespace ECommerce.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private StoreContext storeContext;
+        private readonly IProductRepo productRepo;
 
-        public ProductsController(StoreContext context)
+        public ProductsController(IProductRepo productRepo)
         {
-            this.storeContext = context;
+            this.productRepo = productRepo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts()
         {
-            return Ok(await storeContext.Products.ToListAsync());
+            return Ok(await productRepo.GetProductsAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return  Ok( await storeContext.Products.FindAsync(id));
+            return Ok(await productRepo.GetProductByIdAsync(id));
+
+        }
+
+        [HttpGet("brands")]
+        public async Task<ActionResult<Product>> GetBrands()
+        {
+            return Ok(await productRepo.GetProductBrandsAsync());
+
+        }
+
+        [HttpGet("types")]
+        public async Task<ActionResult<Product>> GetTypes()
+        {
+            return Ok(await productRepo.GetProductTypesAsync());
+
         }
     }
 }
