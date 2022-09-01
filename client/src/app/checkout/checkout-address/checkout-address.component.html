@@ -1,0 +1,80 @@
+<div class="mt-4" [formGroup]="checkoutForm">
+  <div class="d-flex justify-content-between align-items-center">
+    <h4>Shipping address</h4>
+    <button class="btn btn-outline-success mb-3">
+      Save as default address
+    </button>
+  </div>
+
+  <div class="row" formGroupName="addressForm">
+
+    <div class="form-group col-6">
+      <div class="form-label-group">
+        <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('firstName')" formControlName="firstName" type="firstName" id="firstName" placeholder="First Name">
+        <label for="firstname">firstName</label>
+        <span class="text-danger" *ngIf="checkoutForm.get('firstName')?.invalid
+              && checkoutForm.get('firstName')?.touched
+              && checkoutForm.get('firstName')?.errors?.['required']">
+            firstName is required
+          </span>
+      </div>
+    </div>
+
+      <div class="form-group col-6">
+        <div class="form-label-group">
+          <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('lastName')" formControlName="lastName" type="lastName" id="lastName" placeholder="lastName">
+          <label for="lastName">lastName</label>
+          <span class="text-danger" *ngIf="checkoutForm.get('lastName')?.invalid
+              && checkoutForm.get('lastName')?.touched
+              && checkoutForm.get('lastName')?.errors?.['required']">
+            lastName is required
+          </span>
+        </div>
+      </div>
+        <div class="form-group col-6">
+          <div class="form-label-group">
+            <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('street')" formControlName="street" type="street" id="street" placeholder="street">
+            <label for="street">street</label>
+            <span class="text-danger" *ngIf="checkoutForm.get('street')?.invalid
+              && checkoutForm.get('street')?.touched
+              && checkoutForm.get('street')?.errors?.['required']">
+            street is required
+          </span>
+          </div>
+        </div>
+          <div class="form-group col-6">
+            <div class="form-label-group">
+              <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('city')" formControlName="city" type="city" id="city" placeholder="city">
+              <label for="city">city</label>
+              <span class="text-danger" *ngIf="checkoutForm.get('city')?.invalid
+              && checkoutForm.get('city')?.touched
+              && checkoutForm.get('city')?.errors?.['required']">
+            city is required
+          </span>
+            </div>
+          </div>
+            <div class="form-group col-6">
+              <div class="form-label-group">
+                <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('state')" formControlName="state" type="state" id="state" placeholder="state">
+                <label for="state">state</label>
+                <span class="text-danger" *ngIf="checkoutForm.get('state')?.invalid
+              && checkoutForm.get('state')?.touched
+              && checkoutForm.get('state')?.errors?.['state']">
+            state is required
+          </span>
+              </div>
+            </div>
+              <div class="form-group col-6">
+                <div class="form-label-group">
+                  <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('zipcode')" formControlName="zipcode" type="zipcode" id="zipcode" placeholder="zipcode">
+                  <label for="firstname">zipcode</label>
+                  <span class="text-danger" *ngIf="checkoutForm.get('zipcode')?.invalid
+              && checkoutForm.get('zipcode')?.touched
+              && checkoutForm.get('zipcode')?.errors?.['required']">
+            zipcode is required
+          </span>
+                </div>
+    </div>
+  </div>
+</div>
+
