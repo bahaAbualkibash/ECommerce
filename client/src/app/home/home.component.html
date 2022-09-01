@@ -1,0 +1,19 @@
+<section class="featured">
+  <div class="d-flex justify-content-center pt-4">
+    <h1>Welcome to the Shop!</h1>
+  </div>
+</section>
+
+<div class="container w-25 h-25">
+<carousel [isAnimated]="true">
+  <slide *ngFor="let product of products;let i = index" >
+    <img [src]="product.pictureUrl" alt="slide {{i}}" >
+    <div class="carousel-caption d-none d-md-block">
+      <h4>{{product.name}}</h4>
+      <h5>{{product.price | currency}} </h5>
+      <button class="btn btn-outline-warning" routerLink="/shop/{{product.id}}">See Now</button>
+    </div>
+  </slide>
+</carousel>
+</div>
+

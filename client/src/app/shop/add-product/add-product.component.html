@@ -1,0 +1,156 @@
+<ng-container *ngIf="(isEdit && productToUpdate) || (!isEdit && !productToUpdate)">
+<div class="d-flex justify-content-center mt-5">
+  <div class="col-3">
+    <form class="form-signin" [formGroup]="productForm" (ngSubmit)="onSubmit()">
+      <div class="text-center mb-4">
+        <h1 class="h3 mb-3 font-weight-normal" *ngIf="!isEdit">Add Product</h1>
+        <h1 class="h3 mb-3 font-weight-normal" *ngIf="isEdit">Update {{productToUpdate.name}}</h1>
+      </div>
+
+
+      <div class="form-label-group">
+        <input [ngClass]="DisplayFieldCss('productName')" formControlName="productName" type="text" id="productName"
+               class="form-control" placeholder="Name">
+        <label for="productName">Name</label>
+        <span class="text-danger" *ngIf="productForm.get('productName')?.invalid
+              && productForm.get('productName')?.touched
+              && productForm.get('productName')?.errors?.['required']">
+            Name is required
+          </span>
+      </div>
+
+      <div class="form-label-group">
+        <textarea class="form-control" autocomplete="on" [ngClass]="DisplayFieldCss('productDescription')"
+                  formControlName="productDescription" id="productDescription" placeholder="Description"></textarea>
+        <div class="invalid-feedback" *ngIf="productForm.get('productDescription')?.invalid
+              && productForm.get('productDescription')?.touched">
+          <span class="text-danger" *ngIf="productForm.get('productDescription')?.errors?.['required']">
+            Description is required
+          </span>
+        </div>
+      </div>
+
+      <div class="form-label-group">
+        <input [ngClass]="DisplayFieldCss('Price')" formControlName="productPrice" type="number" id="productPrice"
+               class="form-control" placeholder="Price">
+        <label for="productPrice">Price</label>
+        <span class="text-danger" *ngIf="productForm.get('productPrice')?.invalid
+              && productForm.get('productPrice')?.touched
+              && productForm.get('productPrice')?.errors?.['required']">
+            Price is required
+          </span>
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="custom-file">
+          <input accept="image/*" (change)="onFileChosen($event)" [ngClass]="DisplayFieldCss('productPictureUrl')"
+                 formControlName="productPictureUrl" type="file" class="custom-file-input" id="productPictureUrl">
+          <label class="custom-file-label" for="productPictureUrl">{{this.file?.name || "Choose file..."}}</label>
+        </div>
+        <div class="input-group-append">
+          <button (click)="openWindow(template)" type="button" class="input-group-text" id="inputGroupFileAddon02">Preview</button>
+        </div>
+        <div class="invalid-feedback" *ngIf="productForm.get('productPictureUrl')?.invalid
+              && productForm.get('productPictureUrl')?.touched">
+          <span class="text-danger" *ngIf="productForm.get('productPictureUrl')?.errors?.['required']">
+            PictureUrl is required
+          </span>
+        </div>
+      </div>
+
+
+      <div class="mb-3">
+        <div class="input-group">
+
+        <select (change)="onTypeChanges(type.value)" #type [ngClass]="DisplayFieldCss('productTypeId')" formControlName="productTypeId" class="custom-select">
+          <option value="0">Choose...</option>
+          <option *ngFor="let type of types" value="{{type.id}}">{{type.name}}</option>
+        </select>
+        <div class="input-group-append">
+          <button (click)="openWindow(addTemplate,'Type')" class="btn btn-outline-secondary"  type="button"> <span class="fa fa-plus"></span>Type</button>
+        </div>
+        <div class="invalid-feedback" *ngIf="productForm.get('productTypeId')?.invalid
+              && productForm.get('productTypeId')?.touched">
+          <span class="text-danger" *ngIf="productForm.get('productTypeId')?.errors?.['required']">
+            productTypeId is required
+          </span>
+        </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="input-group">
+
+        <select [ngClass]="DisplayFieldCss('productBrandId')" formControlName="productBrandId" class=" col-10 custom-select">
+          <option selected value="0" [label]="+type.value === 0 ? 'Choose Type First...' : 'Choose...'"></option>
+          <option *ngFor="let brand of brands" value="{{brand.id}}">{{brand.name}}</option>
+
+        </select>
+          <div class="input-group-append">
+            <button (click)="openWindow(addTemplate,'Brand')" class="btn btn-outline-secondary"  type="button"> <span class="fa fa-plus"></span>Brand</button>
+          </div>
+        <div class="invalid-feedback" *ngIf="productForm.get('productBrandId')?.invalid
+              && productForm.get('productBrandId')?.touched">
+          <span class="text-danger" *ngIf="productForm.get('productBrandId')?.errors?.['required']">
+            productTypeId is required
+          </span>
+        </div>
+        </div>
+      </div>
+<!--TODO: detect if value changed from initial values when updating products-->
+      <button class="btn btn-lg btn-primary btn-block" type="submit"
+              [disabled]="productForm.invalid || productForm.pending || productForm.pristine" *ngIf="!isEdit">Add Now
+      </button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit"
+              [disabled]="productForm.invalid || productForm.pending || productForm.pristine" *ngIf="isEdit">Update Now
+      </button>
+    </form>
+
+
+  </div>
+</div>
+
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Preview Image</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h3 class="alert alert-warning" *ngIf="!imageBeforeUpdate">There is no image selected!</h3>
+    <img class="img-fluid" [src]=" imageBeforeUpdate" alt="">
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+  </div>
+</ng-template>
+
+  <ng-template #addTemplate>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Add {{addTypeOrBrand}}</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="input-group mb-3">
+        <input #typeorbrand="ngModel" ngModel required  type="text" id="{{addTypeOrBrand}}"
+               class="form-control" placeholder="Name">
+        <div class="input-group-append">
+          <button (click)="AddTypeOrBrand(typeorbrand.control.value,this.oldTypeId)" [disabled]="!typeorbrand.value " class="btn  btn-primary btn-block" type="button"> <span class="fa fa-plus"></span> Add Now</button>
+        </div>
+        <div class="invalid-feedback d-block" *ngIf="typeorbrand.invalid
+              && typeorbrand.control.touched">
+          <span class="text-danger" *ngIf="typeorbrand.control.errors?.['required']">
+            {{addTypeOrBrand}} is required
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+    </div>
+  </ng-template>
+</ng-container>

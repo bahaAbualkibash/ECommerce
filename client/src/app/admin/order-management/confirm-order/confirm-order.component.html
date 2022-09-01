@@ -1,0 +1,9 @@
+<div class="container">
+  <div class="row">
+    <app-order-item [isAdmin]="Order" [order]="Order"></app-order-item>
+
+    <div class=" col-12 d-flex justify-content-center">
+      <button class="btn btn-success" (click)="onConfirm(Order)" >Confirm Order</button>
+    </div>
+  </div>
+</div>

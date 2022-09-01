@@ -1,0 +1,32 @@
+<div class="container my-5">
+  <div class="table-responsive">
+    <table class="table table-hover text-center">
+      <thead>
+      <tr>
+        <th class="border-0 bg-light " scope="col" >
+          <div class="p-2 px-3 text-uppercase">Order</div>
+        </th>
+        <th scope="col" class="border-0 bg-light " >
+          <div class="py-2 text-uppercase">Date</div>
+        </th>
+        <th scope="col" class="border-0  bg-light" >
+          <div class="py-2 text-uppercase" >Total</div>
+        </th>
+        <th scope="col" class="border-0 bg-light " >
+          <div class="py-2 text-uppercase">Status</div>
+        </th>
+      </tr>
+      </thead>
+      <tbody >
+      <ng-container *ngFor="let item of orders">
+      <tr  [class]="orderService.lastVisitedOrder === item.id ? 'table-warning' : ''"  [routerLinkActive]="rowActive(item)"  routerLink="/orders/{{item.id}}">
+        <td class="align-middle"><strong> # {{item.id }}</strong></td>
+        <td class="align-middle"> {{item.orderDate | date : 'medium'  }}</td>
+        <td class="align-middle"> {{item.total | currency  }}</td>
+        <td class="align-middle font-weight-bolder" [ngClass]="StatusStyle(item.status)" style="color:white"> {{item.status  }}</td>
+      </tr>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,124 @@
+<div class="container-fluid my-5">
+  <div class="row mb-4 d-flex">
+    <div class="col-3">
+    <h5 class="text-warning ml-3 col-1 d-inline">Sort</h5>
+    <select  #sortSelectRef class="custom-select w-auto d-inline" (change)="onSortSelected(sortSelectRef.value)">
+      <ng-container *ngFor="let sort of sortOptions">
+      <option [selected]="orderParams.sort === sort.value " [value]="sort.value">{{sort.name}}</option>
+      </ng-container>
+    </select>
+
+    </div>
+    <div class="col-3">
+      <div class="custom-control custom-checkbox">
+        <input #deliveredIncludedRef (change)="onDeliveredIncluded()" type="checkbox" class="custom-control-input" id="customCheckDisabled">
+        <label class="custom-control-label" for="customCheckDisabled">Include Delivered Orders</label>
+      </div>
+    </div>
+
+
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover text-center">
+      <thead>
+      <tr>
+        <th class="border-0 bg-light " scope="col" >
+          <div class="p-2 px-3 text-uppercase">Order</div>
+        </th>
+        <th scope="col" class="border-0 bg-light " >
+          <div class="py-2 text-uppercase">Products</div>
+        </th>
+        <th scope="col" class="border-0 bg-light " >
+          <div class="py-2 text-uppercase">Date</div>
+        </th>
+        <th scope="col" class="border-0  bg-light" >
+          <div class="py-2 text-uppercase" >Total</div>
+        </th>
+        <th scope="col" class="border-0 bg-light " >
+          <div class="py-2 text-uppercase">Status</div>
+        </th>
+        <th scope="col" class="border-0 bg-light " >
+          <div class="py-2 text-uppercase">Manage</div>
+        </th>
+      </tr>
+      </thead>
+      <tbody >
+      <ng-container *ngFor="let order of orders">
+        <tr [class]="ordersService.lastVisitedOrder === order.id ? 'table-warning' : ''" >
+          <td class="align-middle"><strong> # {{order.id }}</strong></td>
+          <td class="align-middle w-25">
+              <carousel [itemsPerSlide]="8"
+                        [singleSlideOffset]="true"
+                        [interval]="0"
+                        [noWrap]="true">
+                <slide *ngFor="let slide of order.orderItems; let index=index">
+                  <img [src]="slide.picturUrl" alt="image slide" class="img-fluid" style="display: block; width: 70%;">
+<!--                  <div class="carousel-caption">-->
+<!--                    <h4>{{slide.productName}}</h4>-->
+<!--                  </div>-->
+                </slide>
+              </carousel>
+          </td>
+          <td class="align-middle"> {{order.orderDate | date : 'medium'  }}</td>
+          <td class="align-middle"> {{order.total | currency  }}</td>
+          <td class="align-middle font-weight-bolder" [ngClass]="StatusStyle(order.status)" style="color:white"> {{order.status  }}</td>
+          <td class="align-middle font-weight-bolder" >
+            <button class="btn btn-primary" routerLink="admin/order/{{order.id}}">View</button>
+            <button class="btn btn-info ml-2" *ngIf="order.status !== OrderStatus.Delivered" (click)="openWindow(EditStatus,order)">Edit Status</button>
+          </td>
+        </tr>
+
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="d-flex justify-content-center">
+  <app-paging-footer [pageSize]="orderParams.pageSize" (pageChanged)="onPageChanged($event)" [totalCount]="totalCount"></app-paging-footer>
+</div>
+
+
+<ng-template #EditStatus class="modal-lg">
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Edit Order Status</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-stepper [linearModeSelected]="false" #appStepper>
+      <cdk-step [label]="OrderStatusDisplay.Pending"  [completed]="false">
+        <app-confirm-order [Order]="(bsmodalService.config?.initialState)" ></app-confirm-order>
+      </cdk-step>
+      <cdk-step [label]="OrderStatusDisplay.InProgress" [completed]="false">
+        <app-in-progress ></app-in-progress>
+      </cdk-step>
+      <cdk-step [label]="OrderStatusDisplay.InShipping" >
+        <app-in-shipping></app-in-shipping>
+      </cdk-step>
+      <cdk-step [label]="OrderStatusDisplay.Delivered"  [completed]="false">
+        <app-delivered></app-delivered>
+      </cdk-step>
+      <cdk-step [label]="OrderStatusDisplay.Canceled"  [completed]="false">
+        <app-canceled></app-canceled>
+      </cdk-step>
+    </app-stepper>
+<!--    <div class="input-group mb-3">-->
+<!--      <input #typeorbrand="ngModel" ngModel required  type="text" id="{{addTypeOrBrand}}"-->
+<!--             class="form-control" placeholder="Name">-->
+<!--      <div class="input-group-append">-->
+<!--        <button (click)="AddTypeOrBrand(typeorbrand.control.value,this.oldTypeId)" [disabled]="!typeorbrand.value " class="btn  btn-primary btn-block" type="button"> <span class="fa fa-plus"></span> Add Now</button>-->
+<!--      </div>-->
+<!--      <div class="invalid-feedback d-block" *ngIf="typeorbrand.invalid-->
+<!--              && typeorbrand.control.touched">-->
+<!--          <span class="text-danger" *ngIf="typeorbrand.control.errors?.['required']">-->
+<!--            {{addTypeOrBrand}} is required-->
+<!--          </span>-->
+<!--      </div>-->
+<!--    </div>-->
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+  </div>
+</ng-template>
+

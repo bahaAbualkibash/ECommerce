@@ -1,0 +1,40 @@
+<div class="d-flex justify-content-center mt-5">
+  <div class="col-3">
+    <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="text-center mb-4">
+        <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+      </div>
+
+
+
+      <div class="form-label-group">
+        <input class="form-control" autocomplete="on" [ngClass]="DisplayFieldCss('email')" formControlName="email" type="email" id="email" placeholder="Email address">
+        <label for="email">Email address</label>
+        <span class="text-danger" *ngIf="loginForm.get('email')?.invalid
+              && loginForm.get('email')?.touched
+              && loginForm.get('email')?.errors?.['required']">
+            Password address is required
+          </span>
+        <span  class="text-danger" *ngIf="loginForm.get('email')?.invalid
+                && loginForm.get('email')?.touched
+                && loginForm.get('email')?.errors?.['pattern']">
+              Email address is not valid
+            </span>
+      </div>
+
+      <div class="form-label-group">
+        <input [ngClass]="DisplayFieldCss('password')" formControlName="password" type="password" id="inputPassword" class="form-control" placeholder="Password">
+        <label for="inputPassword">Password</label>
+        <span class="text-danger" *ngIf="loginForm.get('password')?.invalid
+              && loginForm.get('password')?.touched
+              && loginForm.get('password')?.errors?.['required']">
+            Password address is required
+          </span>
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit" [disabled]="loginForm.invalid">Sign in</button>
+      <p class="mt-5 mb-3 text-muted text-center">© 2017-2022</p>
+    </form>
+
+
+</div>
+</div>

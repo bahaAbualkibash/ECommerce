@@ -1,0 +1,63 @@
+
+
+<div class="container mt-3">
+  <div class="row">
+    <section class="col-3">
+      <ng-container *ngIf="types && brands">
+      <h5 class="text-warning ml-3 mt-4 mb-3">Sort</h5>
+      <select #sortSelectRef class="custom-select mb-4" (change)="onSortSelected(sortSelectRef.value)">
+        <option *ngFor="let sort of sortOptions" [value]="sort.value">{{sort.name}}</option>
+      </select>
+
+      <h5 class="text-warning ml-3">Brands</h5>
+      <ul class="list-group my-3">
+        <li class="list-group-item"
+            *ngFor="let brand of brands"
+            [class.active]="brand.id === this.shopParams.brandId"
+            [value]="brand.id"
+            (click)="onBrandSelected(brand.id)"
+            aria-current="true"
+        >{{brand.name}}</li>
+      </ul>
+
+      <h5 class="text-warning ml-3">Categories</h5>
+      <ul class="list-group my-3">
+        <li class="list-group-item"
+            *ngFor="let type of types"
+            [class.active]="type.id === this.shopParams.typeId"
+            [value]="type.id"
+            (click)="onTypeSelected(type.id)"
+            aria-current="true">{{type.name}}</li>
+
+      </ul>
+
+      </ng-container>
+    </section>
+
+    <section class="col-9" >
+
+      <div class="d-flex justify-content-between align-items-center pb-2">
+        <app-paging-header  [pageNumber]="this.shopParams.pageNumber" [pageSize]="shopParams.pageSize" [totalCount]="totalCount"></app-paging-header>
+
+        <div class="form-inline" *ngIf="products">
+          <input #search class="form-control mr-2" style="width: 300px" placeholder="Search" type="text">
+          <button (click)="onSearch()" (keyup.enter)="onSearch()" class="btn btn-outline-primary my-2">Search</button>
+          <button (click)="onReset()" class="btn btn-outline-success ml-2">Reset</button>
+          <button routerLink="product/add" *ngIf="(currentUser$ | async)?.role === 'Admin'" class="btn btn-info ml-2">Add Product</button>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-4 mb-4" *ngFor="let product of products">
+          <app-product-item (deleteProduct)="deleteProduct($event)" [ProductInput]="product"></app-product-item>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <app-paging-footer [totalCount]="totalCount" [pageSize]="shopParams.pageSize" (pageChanged)="onPageChanged($event)"></app-paging-footer>
+      </div>
+
+    </section>
+  </div>
+</div>

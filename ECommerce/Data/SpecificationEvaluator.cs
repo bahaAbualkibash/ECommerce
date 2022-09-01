@@ -19,11 +19,25 @@ namespace ECommerce.Data
 
           query = spec.Includes.Aggregate(query,(current,include) => current.Include(include));
 
+            if(spec.OrderBy != null)
+            {
+                query = query.OrderBy(spec.OrderBy);
+            }
+
+            if(spec.OrderByDescending != null)
+            {
+              query = query.OrderByDescending(spec.OrderByDescending);
+            }
+
+            if (spec.IsPaginationActivated)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
             //spec.Includes.ForEach(a =>
             //{
             //    query = query.Include(a);
             //});
-
+            
             return query;
         }
     }
