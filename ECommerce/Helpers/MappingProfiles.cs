@@ -29,6 +29,7 @@ namespace ECommerce.Helpers
                 .ForMember(d => d.PictureUrl, o => o.MapFrom(s => s.ProductPictureUrl));
 
             CreateMap<AddressDto, Models.Order.Address>();
+            CreateMap<OrderHistoryAddressDto, OrderHistoryAddress>();
 
             CreateMap<OrderItem, OrderItemDto>()
     .ForMember(d => d.ProductId, o => o.MapFrom(s => s.ItemOrdered.ProductItemId))
@@ -59,7 +60,11 @@ namespace ECommerce.Helpers
                 .ForMember(d => d.Status, o => o.MapFrom(p => Enum.Parse(typeof(OrderStatus),p.OrderStatus)));
 
 
-            CreateMap<UpdateOrderStatusDto, OrderHistoryAddress>();
+            CreateMap<UpdateOrderStatusDto, OrderHistoryAddress>()
+                .ForMember(d => d.Id , o => o.Ignore());
+
+            CreateMap<OrderHistory, OrderHistoryStatusDto>()
+                .ForMember(d => d.OrderStatus , o => o.MapFrom(s => s.Status));
         }
     }
 }

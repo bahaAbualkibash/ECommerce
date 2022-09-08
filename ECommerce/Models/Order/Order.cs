@@ -24,6 +24,7 @@
         public decimal Subtotal { get; set; }
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public string? PaymentIntentId { get; set; }
+        public string? CanceledReason { get; set; }
         
         public decimal GetTotal()
         {

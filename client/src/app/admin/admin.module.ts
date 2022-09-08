@@ -12,6 +12,7 @@ import { InProgressComponent } from './order-management/in-progress/in-progress.
 import { DeliveredComponent } from './order-management/delivered/delivered.component';
 import { CanceledComponent } from './order-management/canceled/canceled.component';
 import { InShippingComponent } from './order-management/in-shipping/in-shipping.component';
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -24,14 +25,15 @@ import { InShippingComponent } from './order-management/in-shipping/in-shipping.
     CanceledComponent,
     InShippingComponent
   ],
-  imports: [
-    CommonModule,
-    AdminRoutingModule,
-    CarouselModule,
-    SharedModule,
-    OrdersModule,
+    imports: [
+        CommonModule,
+        AdminRoutingModule,
+        CarouselModule,
+        SharedModule,
+        OrdersModule,
+        FormsModule,
 
-  ],
+    ],
   providers: [
     BsModalService
   ]

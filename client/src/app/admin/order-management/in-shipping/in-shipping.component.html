@@ -1,1 +1,48 @@
-<p>in-shipping works!</p>
+<div class="container  p-4 ">
+  <div class="row d-flex align-items-end justify-content-end">
+    <button class="btn btn-primary " (click)="onSubmit(true)" cdkStepperNext>Complete shipping</button>
+  </div>
+  <div class="row ">
+    <div class="col-12 ">
+      <h4 class="d-flex justify-content-center">Update Shipping Information</h4>
+      <form class="form-signin" [formGroup]="shippingForm" (ngSubmit)="onSubmit(true)">
+        <div class="form-group ">
+          <div class="form-label-group">
+            <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('street')" formControlName="street" type="street" id="street" placeholder="street">
+            <label for="street">street</label>
+            <span class="text-danger" *ngIf="shippingForm.get('street')?.invalid
+              && shippingForm.get('street')?.touched
+              && shippingForm.get('street')?.errors?.['required']">
+            street is required
+          </span>
+          </div>
+        </div>
+        <div class="form-group ">
+          <div class="form-label-group">
+            <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('city')" formControlName="city" type="city" id="city" placeholder="city">
+            <label for="city">city</label>
+            <span class="text-danger" *ngIf="shippingForm.get('city')?.invalid
+              && shippingForm.get('city')?.touched
+              && shippingForm.get('city')?.errors?.['required']">
+            city is required
+          </span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label-group">
+            <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('state')" formControlName="state" type="state" id="state" placeholder="state">
+            <label for="state">state</label>
+            <span class="text-danger" *ngIf="shippingForm.get('state')?.invalid
+              && shippingForm.get('state')?.touched">
+            state is required
+          </span>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center">
+          <button type="button" class="btn btn-danger col-6">Cancel Order</button>
+          <button type="button" (click)="onSubmit(false)" [disabled]="shippingForm.invalid" class="btn btn-success col-6">Update order address</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

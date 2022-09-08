@@ -22,6 +22,7 @@ namespace ECommerce.Repo
             {
                 var repoType = typeof(GenaricRepo<>);
                 var repoInstance = Activator.CreateInstance(repoType.MakeGenericType(typeof(TEntity)),context);
+                // new GenaricRepo<TEntity>(context)
 
                 _repos.Add(type, repoInstance);
             }

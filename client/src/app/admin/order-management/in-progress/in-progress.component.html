@@ -1,15 +1,15 @@
-<div class="container mt-3  p-4 ">
+<div class="container  p-4 ">
   <div class="row ">
     <div class="col-12 ">
       <h4 class="d-flex justify-content-center">Confirm Shipping</h4>
-      <form class="form-signin" [formGroup]="shippingForm" (ngSubmit)="onSubmit()">
+      <form class="form-signin" [formGroup]="progressForm" (ngSubmit)="onSubmit()">
       <div class="form-group ">
         <div class="form-label-group">
           <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('street')" formControlName="street" type="street" id="street" placeholder="street">
           <label for="street">street</label>
-          <span class="text-danger" *ngIf="shippingForm.get('street')?.invalid
-              && shippingForm.get('street')?.touched
-              && shippingForm.get('street')?.errors?.['required']">
+          <span class="text-danger" *ngIf="progressForm.get('street')?.invalid
+              && progressForm.get('street')?.touched
+              && progressForm.get('street')?.errors?.['required']">
             street is required
           </span>
         </div>
@@ -18,9 +18,9 @@
         <div class="form-label-group">
           <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('city')" formControlName="city" type="city" id="city" placeholder="city">
           <label for="city">city</label>
-          <span class="text-danger" *ngIf="shippingForm.get('city')?.invalid
-              && shippingForm.get('city')?.touched
-              && shippingForm.get('city')?.errors?.['required']">
+          <span class="text-danger" *ngIf="progressForm.get('city')?.invalid
+              && progressForm.get('city')?.touched
+              && progressForm.get('city')?.errors?.['required']">
             city is required
           </span>
         </div>
@@ -29,25 +29,15 @@
         <div class="form-label-group">
           <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('state')" formControlName="state" type="state" id="state" placeholder="state">
           <label for="state">state</label>
-          <span class="text-danger" *ngIf="shippingForm.get('state')?.invalid
-              && shippingForm.get('state')?.touched">
+          <span class="text-danger" *ngIf="progressForm.get('state')?.invalid
+              && progressForm.get('state')?.touched">
             state is required
           </span>
         </div>
       </div>
-      <div class="form-group ">
-        <div class="form-label-group">
-          <input class="form-control" autocomplete="off" [ngClass]="DisplayFieldCss('country')" formControlName="country" type="country" id="country" placeholder="country">
-          <label for="state">country</label>
-          <span class="text-danger" *ngIf="shippingForm.get('country')?.invalid
-              && shippingForm.get('country')?.touched">
-            country is required
-          </span>
-        </div>
-      </div>
       <div class="d-flex justify-content-center">
-        <button class="btn btn-danger col-6">Cancel Order</button>
-        <button class="btn btn-primary col-6">Submit start shipping</button>
+        <button type="button" (click)="onCancel()" class="btn btn-danger col-6">Cancel Order</button>
+        <button class="btn btn-success col-6" (click)="onSubmit()" [disabled]="progressForm.invalid" cdkStepperNext>Start shipping</button>
       </div>
       </form>
     </div>

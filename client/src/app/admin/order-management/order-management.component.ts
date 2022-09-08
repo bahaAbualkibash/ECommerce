@@ -4,6 +4,8 @@ import {IOrder, OrderStatus, OrderStatusDisplay} from "../../shared/Models/Order
 import {AdminService} from "../admin.service";
 import {OrderParams, OrderSortType} from "../../shared/Models/OrderParams";
 import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
+import {IOrderHistory} from "../../shared/Models/OrderHistory";
+import {map} from "rxjs";
 
 @Component({
   selector: 'app-order-management',
@@ -13,9 +15,12 @@ import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 export class OrderManagementComponent implements OnInit {
   orders!: IOrder[];
   modalRef!: BsModalRef;
+  modalRef2!: BsModalRef;
   @ViewChild("options") sortSelectRef!: HTMLOptionsCollection;
   orderParams = new OrderParams();
   totalCount!: number;
+  nextStep!:number | undefined;
+  selectedOrderCurrentStep!: string[];
   sortOptions = [
     {name: "Order#: low to high",value: OrderSortType.IdAsc},
     {name: "Order#: high to low",value: OrderSortType.IdDesc},
@@ -47,21 +52,16 @@ export class OrderManagementComponent implements OnInit {
   }
 
   StatusStyle(status: string) {
-    let x: string =OrderStatus.InProgress.valueOf();
-    let y: string =OrderStatus.PaymentRecevied.valueOf();
-    switch (status){
-      case OrderStatus.Pending.valueOf() ||x || OrderStatus.InShipping.valueOf() || y :
-        return "bg-warning";
-
-      case OrderStatus.Canceled.valueOf() || OrderStatus.PaymentFailed.valueOf():
-        return "bg-danger";
-      case OrderStatus.Delivered.valueOf():
-        return "bg-success";
-      default : {
-        break;
-      }
+    if(status === OrderStatusDisplay.Pending || status === OrderStatusDisplay.InProgress||
+      status === OrderStatusDisplay.InShipping|| status === OrderStatusDisplay.PaymentRecevied){
+      return "bg-warning";
+    }else if(   status === OrderStatusDisplay.Canceled|| status === OrderStatusDisplay.PaymentFailed){
+      return 'bg-danger'
+    }else if( status === OrderStatusDisplay.Delivered){
+      return "bg-success";
+    }else{
+      return 'bg-light'
     }
-    return  "bg-danger";
   }
 
   onPageChanged($event: number) {
@@ -72,10 +72,21 @@ export class OrderManagementComponent implements OnInit {
   }
 
   openWindow(template: TemplateRef<any>, order: IOrder) {
+    this.adminService.getHistoryListForOrder(order.id).subscribe((response) => {
+      if(response.includes(OrderStatusDisplay.Canceled) || response.includes(OrderStatusDisplay.Delivered) ){
+        this.selectedOrderCurrentStep = [response[response.indexOf(OrderStatusDisplay.Canceled)] || response[response.indexOf(OrderStatusDisplay.Delivered)] ]
+      }else {
+        this.selectedOrderCurrentStep = response;
+      }
+      this.nextStep = this.selectedOrderCurrentStep.length -1;
+      this.modalRef = this.bsmodalService.show(template,{initialState: order});
+       this.modalRef.setClass("modal-lg")
+    } )
 
-    this.modalRef = this.bsmodalService.show(template,{initialState: order});
-    this.modalRef.setClass("modal-lg")
-
+  }
+  closeWindow(){
+    this.modalRef.hide();
+    // this.cancel = undefined;
   }
 
   onSortSelected(value: string) {
@@ -86,5 +97,24 @@ export class OrderManagementComponent implements OnInit {
   onDeliveredIncluded() {
     this.orderParams.isDeliveredIncluded = !this.orderParams.isDeliveredIncluded;
     this.getOrders();
+  }
+
+  cancelSelected(template: TemplateRef<any>, order: IOrder) {
+   this.modalRef2 = this.bsmodalService.show(template, {initialState: order});
+  }
+
+  changeIndex($event: number) {
+    console.log($event);
+    setTimeout(() => {
+      this.nextStep = $event
+    },20)
+  }
+
+  statusChanged($event: string[]) {
+    if($event.includes(OrderStatusDisplay.Canceled) || $event.includes(OrderStatusDisplay.Delivered) ){
+      this.selectedOrderCurrentStep = [$event[$event.indexOf(OrderStatusDisplay.Canceled)] || $event[$event.indexOf(OrderStatusDisplay.Delivered)] ]
+    }else {
+      this.selectedOrderCurrentStep = $event;
+    }
   }
 }

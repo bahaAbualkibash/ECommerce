@@ -15,7 +15,7 @@ namespace ECommerce.Data
             {
                 query = query.Where(spec.Criteria);
             }
-            // add Include to the query like forEach
+            
 
           query = spec.Includes.Aggregate(query,(current,include) => current.Include(include));
 
@@ -33,10 +33,7 @@ namespace ECommerce.Data
             {
                 query = query.Skip(spec.Skip).Take(spec.Take);
             }
-            //spec.Includes.ForEach(a =>
-            //{
-            //    query = query.Include(a);
-            //});
+
             
             return query;
         }

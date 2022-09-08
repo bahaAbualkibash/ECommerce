@@ -46,7 +46,17 @@ namespace ECommerce.Services
             //delete basket after order
             await basketRepo.DeleteBasketAsync(basketId);
 
-            // return order
+            //Add Status to history
+            var history = new OrderHistory()
+            {
+                EditorEmail = "create@admin.com",//TODO: change accordingly 
+                LastModifiedDate = DateTime.Now,
+                Status = OrderStatus.Pending,
+                OrderHistoryAddress = await GetLatestHistoryAddressOrCompanyAddress(null),
+                Order = order
+            };
+            await CreateHistory(history);
+            
             return order;
 
         }
@@ -87,29 +97,51 @@ namespace ECommerce.Services
         {
             foreach (var proparety in o.GetType().GetProperties())
             {
-                if (proparety == null)
+                if (proparety.GetValue(o) == null)
                 {
                     return true;
                 };
             }
             return false;
         }
-        public  void CreateHistory(OrderHistory orderHistory)
+        public async  Task CreateHistory(OrderHistory orderHistory)
         {
-            var result = IsAnyProperetyNull(orderHistory.OrderHistoryAddress);
             
-            if (result)
+            if ( orderHistory.OrderHistoryAddress == null || IsAnyProperetyNull(orderHistory.OrderHistoryAddress))
             {
-
+               var historyOrderAddress = await GetLatestHistoryAddressOrCompanyAddress(orderHistory);
+                orderHistory.OrderHistoryAddress = historyOrderAddress;
             }
-
+            
             unitOfWork.Repo<OrderHistory>().Add(orderHistory);
+            await unitOfWork.Complete();
+
         }
 
-        public async Task UpdateOrderStatus(Order order)
+        private async Task<OrderHistoryAddress> GetLatestHistoryAddressOrCompanyAddress(OrderHistory orderHistory)
+        {
+            if (orderHistory != null)
+            {
+                var spec = new OrderHistoryForOrderSpecification(orderHistory.Order.Id);
+                var historeis = await unitOfWork.Repo<OrderHistory>().ListAsync(spec);
+                if (historeis.Count > 0)
+                {
+                    var history = historeis.OrderByDescending(s => s.LastModifiedDate).ToArray()[0];
+
+                    return history.OrderHistoryAddress;
+                }
+            }
+            return new OrderHistoryAddress()
+            {
+                City = "Ramallah",
+                State = "Ramallah",
+                Street = "Al-Irsal st"
+            };
+        }
+
+        public void UpdateOrderStatus(Order order)
         {
              unitOfWork.Repo<Order>().Update(order);
-            var result = await unitOfWork.Complete();
             
 
         }
@@ -119,6 +151,17 @@ namespace ECommerce.Services
             var spec = new OrdersWithItemsAndOrderingSpecification(buyerEmail);
 
             return await unitOfWork.Repo<Order>().ListAsync(spec);
+        }
+
+        public void Detach(Order order)
+        {
+            unitOfWork.Repo<Order>().Detach(order);
+        }
+
+        public async Task<IReadOnlyList<OrderHistory>> GetOrderHistoriesAsync(int orderId)
+        {
+            var spec = new OrderHistoryForOrderSpecification(orderId);
+            return await unitOfWork.Repo<OrderHistory>().ListAsync(spec);
         }
     }
 }

@@ -43,12 +43,14 @@ export class AdminService {
   }
 
   updateState(orderDto: IOrderHistory) {
-    return  this.http.patch(this.baseUrl + "OrderHistory",orderDto);
+    return  this.http.patch<string[]>(this.baseUrl + "OrderHistory",orderDto);
   }
 
-  transferredToShipping(orderHistory:IOrderHistory) {
-
-    //TODO: Change to DTO
-    return this.http.post(this.baseUrl +"OrderHistory",orderHistory);
+  getHistoryListForOrder(id:number){
+    return this.http.get<string[]>(this.baseUrl + "OrderHistory/"+id);
   }
+  // transferredToShipping(orderHistory:IOrderHistory) {
+  //   //TODO: Change to DTO
+  //   return this.http.post(this.baseUrl +"OrderHistory",orderHistory);
+  // }
 }

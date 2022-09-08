@@ -5,6 +5,7 @@ import {ServerErrorComponent} from "./core/server-error/server-error.component";
 import {NotFoundComponent} from "./core/not-found/not-found.component";
 import {AuthGuard} from "./core/guards/auth.guard";
 import {AddProductComponent} from "./shop/add-product/add-product.component";
+import {RoleGuard} from "./core/guards/role.guard";
 
 const routes: Routes = [
   {path: '',component:HomeComponent,data: {breadcrumb: 'Home'}},
@@ -14,7 +15,7 @@ const routes: Routes = [
     ,data: {breadcrumb: 'Shop'}},
   {path:'basket',loadChildren: () => import('./basket/basket.module').then(mod => mod.BasketModule)
     ,data: {breadcrumb: 'Basket'}},
-  {path:'admin',loadChildren: () => import('./admin/admin.module').then(mod => mod.AdminModule)
+  {path:'admin',  canActivate: [AuthGuard,RoleGuard],loadChildren: () => import('./admin/admin.module').then(mod => mod.AdminModule)
     ,data: {breadcrumb: 'Admin Dashboard'}},
   {path:'checkout',loadChildren: () => import('./checkout/checkout.module').then(mod => mod.CheckoutModule)
     ,data: {breadcrumb: 'Checkout'}, canActivate: [AuthGuard]},

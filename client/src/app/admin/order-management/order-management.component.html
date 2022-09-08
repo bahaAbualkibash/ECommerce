@@ -64,10 +64,10 @@
           <td class="align-middle font-weight-bolder" [ngClass]="StatusStyle(order.status)" style="color:white"> {{order.status  }}</td>
           <td class="align-middle font-weight-bolder" >
             <button class="btn btn-primary" routerLink="admin/order/{{order.id}}">View</button>
-            <button class="btn btn-info ml-2" *ngIf="order.status !== OrderStatus.Delivered" (click)="openWindow(EditStatus,order)">Edit Status</button>
+            <button class="btn btn-info ml-2"  (click)="openWindow(EditStatus,order)">Edit Status</button>
           </td>
         </tr>
-
+<!--*ngIf="order.status !== OrderStatus.Delivered && order.status !== OrderStatus.Canceled "-->
       </ng-container>
       </tbody>
     </table>
@@ -81,28 +81,28 @@
 <ng-template #EditStatus class="modal-lg">
   <div class="modal-header">
     <h4 class="modal-title pull-left">Edit Order Status</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeWindow()">
       <span aria-hidden="true">×</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-stepper [linearModeSelected]="false" #appStepper>
-      <cdk-step [label]="OrderStatusDisplay.Pending"  [completed]="false">
-        <app-confirm-order [Order]="(bsmodalService.config?.initialState)" ></app-confirm-order>
+    <app-stepper [selectedIndex]=" nextStep "  [linearModeSelected]="true" #appStepper>
+      <cdk-step *ngIf="!(selectedOrderCurrentStep.includes(OrderStatusDisplay.Delivered) || selectedOrderCurrentStep.includes(OrderStatusDisplay.Canceled))"   [label]="OrderStatusDisplay.Pending" [editable]="false"  [completed]="selectedOrderCurrentStep.includes(OrderStatusDisplay.InProgress)" >
+        <app-confirm-order (OnComplete)="changeIndex($event)" (OnCancel)="cancelSelected(cancelOrder,$any(bsmodalService.config?.initialState))" (OnStatusChanged)="statusChanged($event)" [Order]="$any(bsmodalService.config?.initialState)" ></app-confirm-order>
       </cdk-step>
-      <cdk-step [label]="OrderStatusDisplay.InProgress" [completed]="false">
-        <app-in-progress ></app-in-progress>
+      <cdk-step *ngIf="!(selectedOrderCurrentStep.includes(OrderStatusDisplay.Delivered) || selectedOrderCurrentStep.includes(OrderStatusDisplay.Canceled))"  [label]="OrderStatusDisplay.InProgress" [editable]="false" [completed]="selectedOrderCurrentStep.includes(OrderStatusDisplay.InShipping)">
+        <app-in-progress (OnComplete)="changeIndex($event)" (OnCancel)="cancelSelected(cancelOrder,$any(bsmodalService.config?.initialState))" (OnStatusChanged)="statusChanged($event)" [Order]="$any(bsmodalService.config?.initialState)" ></app-in-progress>
       </cdk-step>
-      <cdk-step [label]="OrderStatusDisplay.InShipping" >
-        <app-in-shipping></app-in-shipping>
+      <cdk-step *ngIf="!(selectedOrderCurrentStep.includes(OrderStatusDisplay.Delivered) || selectedOrderCurrentStep.includes(OrderStatusDisplay.Canceled))"  [label]="OrderStatusDisplay.InShipping" [editable]="false" [completed]="selectedOrderCurrentStep.includes(OrderStatusDisplay.Delivered)" >
+        <app-in-shipping (OnComplete)="changeIndex($event)" (OnCancel)="cancelSelected(cancelOrder,$any(bsmodalService.config?.initialState))"  (OnStatusChanged)="statusChanged($event)" [Order]="$any(bsmodalService.config?.initialState)"></app-in-shipping>
       </cdk-step>
-      <cdk-step [label]="OrderStatusDisplay.Delivered"  [completed]="false">
+      <cdk-step *ngIf="!(selectedOrderCurrentStep.includes(OrderStatusDisplay.Canceled))"  [label]="OrderStatusDisplay.Delivered" [editable]="$any(bsmodalService.config?.initialState).status === OrderStatusDisplay.Delivered">
         <app-delivered></app-delivered>
       </cdk-step>
-      <cdk-step [label]="OrderStatusDisplay.Canceled"  [completed]="false">
-        <app-canceled></app-canceled>
-      </cdk-step>
+
     </app-stepper>
+
+
 <!--    <div class="input-group mb-3">-->
 <!--      <input #typeorbrand="ngModel" ngModel required  type="text" id="{{addTypeOrBrand}}"-->
 <!--             class="form-control" placeholder="Name">-->
@@ -118,7 +118,23 @@
 <!--    </div>-->
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Close</button>
+    <button type="button" class="btn btn-default" (click)="closeWindow()">Close</button>
   </div>
 </ng-template>
 
+
+
+<ng-template #cancelOrder class="modal-lg">
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Edit Order Status</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="this.modalRef2.hide()">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-canceled (OnStatusChanged)="selectedOrderCurrentStep = $event" [Order]="$any(bsmodalService.config?.initialState)"></app-canceled>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="this.modalRef2.hide()">Close</button>
+  </div>
+</ng-template>

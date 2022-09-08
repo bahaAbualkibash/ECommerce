@@ -1,7 +1,8 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {IOrder, OrderStatus} from "../../../shared/Models/Order";
 import {AdminService} from "../../admin.service";
 import {IOrderHistory} from "../../../shared/Models/OrderHistory";
+import {map} from "rxjs";
 
 @Component({
   selector: 'app-confirm-order',
@@ -9,7 +10,13 @@ import {IOrderHistory} from "../../../shared/Models/OrderHistory";
   styleUrls: ['./confirm-order.component.scss']
 })
 export class ConfirmOrderComponent implements OnInit {
-  @Input() Order!: any
+  @Input() Order!: IOrder
+  @Input() initStatus!: string[];
+  OrderStatus = OrderStatus;
+  @Output() OnStatusChanged = new EventEmitter<string[]>();
+  @Output() OnCancel = new EventEmitter<number>();
+  @Output() OnComplete = new EventEmitter<number>();
+
   constructor(private adminService: AdminService) { }
 
   ngOnInit(): void {
@@ -17,13 +24,20 @@ export class ConfirmOrderComponent implements OnInit {
 
   onConfirm(Order: IOrder) {
     let orderhistory: IOrderHistory = {
-      orderStatus: Object.keys(OrderStatus)[Object.values(OrderStatus).indexOf(OrderStatus.InShipping)] ,
-      orderId: Order.id.toString(),
+      orderStatus: OrderStatus.InProgress ,
+      Id: Order.id,
       orderHistoryAddress: null
     };
 
-    this.adminService.updateState(orderhistory).subscribe( () => {
+    this.adminService.updateState(orderhistory).subscribe( (response) => {
       Order.status = OrderStatus.InProgress;
+      this.OnStatusChanged.emit(response);
+      this.OnComplete.emit(response.length-1);
+
     });
+  }
+
+  onCancel() {
+    this.OnCancel.emit(4);
   }
 }

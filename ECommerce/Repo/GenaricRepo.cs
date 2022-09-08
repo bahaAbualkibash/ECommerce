@@ -49,7 +49,6 @@ namespace ECommerce.Repo
 
         public void Update(T entity)
         {
-            //storeContext.Set<T>().Update(entity);
             storeContext.Set<T>().Attach(entity);
             storeContext.Entry(entity).State = EntityState.Modified;
 

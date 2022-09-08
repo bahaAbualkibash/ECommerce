@@ -9,7 +9,8 @@ import {IOrder, OrderStatus} from "./Order";
   }
 
   export interface IOrderHistory {
-    orderId: string;
+    Id: number;
+    cancelReason?: string;
     orderStatus: string
     orderHistoryAddress: IOrderHistoryAddress | null;
   }

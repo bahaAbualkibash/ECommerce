@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ECommerce.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20220830103553_AddOrderHistory")]
-    partial class AddOrderHistory
+    [Migration("20220904085033_OrderHistory")]
+    partial class OrderHistory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -137,10 +137,6 @@ namespace ECommerce.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ZipCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

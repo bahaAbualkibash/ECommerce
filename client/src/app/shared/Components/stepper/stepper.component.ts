@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {CdkStepper} from "@angular/cdk/stepper";
 
 @Component({
@@ -17,5 +17,7 @@ export class StepperComponent extends CdkStepper implements OnInit {
   onClick(index: number){
     this.selectedIndex = index;
   }
+
+
 
 }

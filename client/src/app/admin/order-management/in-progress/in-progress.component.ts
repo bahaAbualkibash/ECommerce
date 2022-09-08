@@ -1,8 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {IOrder, OrderStatus} from "../../../shared/Models/Order";
 import {AdminService} from "../../admin.service";
 import {IOrderHistory, IOrderHistoryAddress} from "../../../shared/Models/OrderHistory";
+import {map} from "rxjs";
 
 @Component({
   selector: 'app-in-progress',
@@ -10,26 +11,27 @@ import {IOrderHistory, IOrderHistoryAddress} from "../../../shared/Models/OrderH
   styleUrls: ['./in-progress.component.scss']
 })
 export class InProgressComponent implements OnInit {
-  shippingForm!:FormGroup;
+  progressForm!:FormGroup;
   @Input() Order!: IOrder;
+  @Output() OnStatusChanged = new EventEmitter<string[]>();
+  @Output() OnCancel = new EventEmitter<number>();
+  @Output() OnComplete = new EventEmitter<number>();
 
 
   constructor(private adminService: AdminService) {
-    this.shippingForm = new FormGroup({
+    this.progressForm = new FormGroup({
         street: new FormControl(null,Validators.required),
         city: new FormControl(null,Validators.required),
-        state: new FormControl(null,Validators.required),
-        country: new FormControl(null,Validators.required),
-      }
+        state: new FormControl(null,Validators.required)}
     )
   }
 
   ngOnInit(): void {
   }
   DisplayFieldCss(field: string){
-    if(this.shippingForm.get(field)?.invalid && this.shippingForm.get(field)?.touched){
+    if(this.progressForm.get(field)?.invalid && this.progressForm.get(field)?.touched){
       return 'is-invalid'
-    }else if (this.shippingForm.get(field)?.valid && this.shippingForm.get(field)?.touched){
+    }else if (this.progressForm.get(field)?.valid && this.progressForm.get(field)?.touched){
       return 'is-valid'
     }else{
       return '';
@@ -39,19 +41,26 @@ export class InProgressComponent implements OnInit {
 
   onSubmit() {
     let orderHistoryAddress: IOrderHistoryAddress ={
-      city: this.shippingForm.get("city")?.value,
-      state: this.shippingForm.get("state")?.value,
-      street: this.shippingForm.get("street")?.value,
+      city: this.progressForm.get("city")?.value,
+      state: this.progressForm.get("state")?.value,
+      street: this.progressForm.get("street")?.value,
       id:0,
     }
 
-    // let orderHistory: IOrderHistory = {
-    //   orderHistoryAddress,
-    //   orderId: this.Order.id,
-    // }
-    //   this.adminService.transferredToShipping(orderHistory).subscribe(() => {
-    //
-    //   },error => {})
+    let orderHistory: IOrderHistory = {
+      orderHistoryAddress,
+      Id: this.Order.id,
+      orderStatus: OrderStatus.InShipping
+    }
+      this.adminService.updateState(orderHistory).subscribe((response) => {
+        this.OnStatusChanged.emit(response);
+        this.OnComplete.emit(response.length-1);
 
+      },error => {})
+
+  }
+
+  onCancel() {
+    this.OnCancel.emit(4);
   }
 }

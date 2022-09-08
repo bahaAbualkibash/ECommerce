@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {IOrder, OrderStatus} from "../shared/Models/Order";
+import {IOrder, OrderStatus, OrderStatusDisplay} from "../shared/Models/Order";
 import {environment} from "../../environments/environment";
 import {OrdersService} from "./orders.service";
 
@@ -26,16 +26,16 @@ export class OrdersComponent implements OnInit {
 
 
   StatusStyle(status: string) {
-    switch (status){
-      case OrderStatus.Pending || OrderStatus.InProgress || OrderStatus.InShipping ||  OrderStatus.PaymentRecevied :
-        return "bg-warning";
-      case OrderStatus.Canceled || OrderStatus.PaymentFailed:
-        return "bg-danger";
-      case OrderStatus.Delivered:
-        return "bg-success";
-
+    if(status === OrderStatusDisplay.Pending || status === OrderStatusDisplay.InProgress||
+      status === OrderStatusDisplay.InShipping|| status === OrderStatusDisplay.PaymentRecevied){
+      return "bg-warning";
+    }else if(   status === OrderStatusDisplay.Canceled|| status === OrderStatusDisplay.PaymentFailed){
+      return 'bg-danger'
+    }else if( status === OrderStatusDisplay.Delivered){
+      return "bg-success";
+    }else{
+      return 'bg-light'
     }
-    return  "bg-danger";
   }
 
   rowActive(item: IOrder) {
